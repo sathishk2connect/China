@@ -1,0 +1,22 @@
+﻿{ "Secrets": [
+      {"aid": 2,
+       "uid": 23,
+       "longitude":  223.23,
+       "latitude":  234.32,
+       "content":  "My Test Content",
+       "time": 2332,
+       "distance":  20,
+       "comments_count":  15,
+       "favourites_count": 20
+       },
+      {"aid": 3,
+       "uid": 21,
+       "longitude":  223.23,
+       "latitude":  234.32,
+       "content":  "My Test Content",
+       "time": 2332,
+       "distance":  20,
+       "comments_count":  15,
+       "favourites_count": 20
+       }
+  ]}

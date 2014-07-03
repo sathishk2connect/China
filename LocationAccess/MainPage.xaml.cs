@@ -6,12 +6,14 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -36,35 +39,39 @@ namespace LocationAccess
 
         private async void LoadListViewData()
         {
-            List<Secret> items = new List<Secret>();
-            var _Folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-            _Folder = await _Folder.GetFolderAsync("SampleJSON");
+             List<Secret> items = new List<Secret>();
+             HttpClient httpClient = new HttpClient();
 
-            var _File = await _Folder.GetFileAsync("Sample.json");
+             // Optionally, define HTTP headers 
+             httpClient.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
 
-            var readData = await Windows.Storage.FileIO.ReadTextAsync(_File);
-
-            JsonObject jsonObject = JsonObject.Parse(readData);
-            JsonArray jsonArray = jsonObject["Secrets"].GetArray();
-
-            foreach (JsonValue groupValue in jsonArray)
+             // Make the call 
+            HttpResponseMessage responseMessage = await httpClient.GetAsync(new Uri("http://scuinfo.com/Api/home_timeline/key/scucsharp?longitude=88&latitude=88"));
+            string responseText = await responseMessage.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(responseText))
             {
-                JsonObject itemObject = groupValue.GetObject();
-                Secret newSecret = new Secret
+                JsonObject jsonObject = JsonObject.Parse(responseText);
+                JsonArray jsonArray = jsonObject["secret"].GetArray();
+
+                foreach (JsonValue groupValue in jsonArray)
                 {
-                    aid = (int)itemObject["aid"].GetNumber(),
-                    uid = (int)itemObject["uid"].GetNumber(),
-                    longitude = itemObject["longitude"].GetNumber(),
-                    latitude = itemObject["latitude"].GetNumber(),
-                    content = itemObject["content"].GetString(),
-                    time = (int)itemObject["time"].GetNumber(),
-                    distance = (int)itemObject["distance"].GetNumber(),
-                    comments_count = (int)itemObject["comments_count"].GetNumber(),
-                    favourite_count = (int)itemObject["favourites_count"].GetNumber()
-                };
-                items.Add(newSecret);
+                    JsonObject itemObject = groupValue.GetObject();
+                    Secret newSecret = new Secret
+                    {
+                        aid = Int32.Parse(itemObject["aid"].GetString()),
+                        uid = Int32.Parse(itemObject["uid"].GetString()),
+                        longitude = Double.Parse(itemObject["longitude"].GetString()),
+                        latitude = Double.Parse(itemObject["latitude"].GetString()),
+                        content = itemObject["content"].GetString(),
+                        time = Int32.Parse(itemObject["time"].GetString()),
+                        distance = itemObject["distance"].GetNumber(),
+                        comments_count = Int32.Parse(itemObject["comments_count"].GetString()),
+                        favorites_count = Int32.Parse(itemObject["favorites_count"].GetString())
+                    };
+                    items.Add(newSecret);
+                }
+                MyList.ItemsSource = items;
             }
-            MyList.ItemsSource = items;
         }
 
         private async void LoadUserID()
@@ -136,7 +143,38 @@ namespace LocationAccess
 
         private void ItemView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var itemId = ((Secret)e.ClickedItem).aid; 
+            Frame.Navigate(typeof(CommentPage), itemId);
+        }
 
+        private async void PostContentMessage()
+        {
+            String streamContent = "content=I+am+good&latitude=25&longitude=34&uid=1&sub=Submit";
+            HttpClient httpClient = new HttpClient();
+            HttpContent content = new StringContent(streamContent);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            //var messageDialog1 = new MessageDialog(content.ToString());
+            //await messageDialog1.ShowAsync();
+            HttpResponseMessage response = await httpClient.PostAsync("http://scuinfo.com/Api/add_content/key/scucsharp",content);
+            string result = await response.Content.ReadAsStringAsync();
+            var messageDialog = new MessageDialog(result);
+            await messageDialog.ShowAsync();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            PostContentMessage();
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

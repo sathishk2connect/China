@@ -14,8 +14,8 @@ namespace LocationAccess.Model
         public double latitude { get; set; }
         public string content { get; set; }
         public int time { get; set; }
-        public int distance { get; set; }
+        public double distance { get; set; }
         public int comments_count { get; set; }
-        public int favourite_count { get; set; }
+        public int favorites_count { get; set; }
     }
 }

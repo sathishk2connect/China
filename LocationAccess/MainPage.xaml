@@ -9,13 +9,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.BottomAppBar>
         <CommandBar>
-                
-
+  
             <AppBarButton Icon="Add" Label="Add">
                 <AppBarButton.Flyout>
                     <Flyout>
                         <Grid Height="400">
-                            <ListBox x:Name="Add" />
+                            <ListBox x:Name="PostContent" />
+                            <Button Content="Post Message" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Click"></Button>
                         </Grid>
                     </Flyout>
                 </AppBarButton.Flyout>
@@ -24,22 +24,24 @@
     </Page.BottomAppBar>
     <Grid>
         <Button Content="Get Location Async" Click="button1_Click" 
-            HorizontalAlignment="Left" Margin="11,164,0,0" Name="button1" VerticalAlignment="Top" />
-        <TextBlock Margin="14,220,0,0" Text="Latitude" Name="textLatitude" />
-        <TextBlock Margin="14,260,0,0" Text="Longitude" Name="textLongitude" />
-        <TextBlock Margin="14,300,0,0" Text="Accuracy" Name="textAccuracy" />
-        <TextBlock Margin="14,340,0,0" Text="UserID" Name="textUserID" />
+            HorizontalAlignment="Left" Margin="11,10,0,0" Name="button1" VerticalAlignment="Top" />
+        <TextBlock Margin="14,30,0,0" Text="Latitude" Name="textLatitude" />
+        <TextBlock Margin="14,60,0,0" Text="Longitude" Name="textLongitude" />
+        <TextBlock Margin="14,90,0,0" Text="Accuracy" Name="textAccuracy" />
+        <TextBlock Margin="14,120,0,0" Text="UserID" Name="textUserID" />
 
         <ListView x:Name="MyList"
                     IsItemClickEnabled="True"
-                    Margin="14,380,0,0"
+                    Margin="14,150,0,0"
                     ItemClick="ItemView_ItemClick"
-                    ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+                    ContinuumNavigationTransitionInfo.ExitElementContainer="True"
+                   >
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Background="Azure" Width="300">
-                        <TextBlock Margin="14,10,0,0" Text="{Binding uid}" />
+                    <StackPanel  Width="300">       
                         <TextBlock Margin="14,10,0,0" Text="{Binding content}" />
+                        <TextBlock Margin="14,10,0,0" Text="{Binding comments_count}" />
+                        <Button Margin="14,10,0,0" Content="{Binding favorites_count}" Click="Button_Click_2" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

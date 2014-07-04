@@ -9,11 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.BottomAppBar>
         <CommandBar>
+            <AppBarButton Icon="Favorite" Label="Favourites" Click="AppBarButton_Click"/>
             <AppBarButton Icon="Add" Label="Add">
                 <AppBarButton.Flyout>
                     <Flyout>
                         <Grid Height="400">
-                            <TextBox x:Name="textSecret" Width="300"  Height="200"/>
+                            <TextBox x:Name="textSecret" AcceptsReturn="True" VerticalAlignment="Stretch" Margin="19,100,24,132"/>
                             <Button Content="Post Message" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Click"></Button>
                         </Grid>
                     </Flyout>
@@ -22,18 +23,54 @@
         </CommandBar>
     </Page.BottomAppBar>
     <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/Background.jpg"
+                    Stretch="UniformToFill" />
+        </Grid.Background>
         <ListView x:Name="MyList"
                     IsItemClickEnabled="True"
-                    Margin="14,150,0,0"
+                    Margin="0,0,0,0"
                     ItemClick="ItemView_ItemClick"
-                    ContinuumNavigationTransitionInfo.ExitElementContainer="True">
+                    ContinuumNavigationTransitionInfo.ExitElementContainer="True" SelectionMode="Single">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid Height="50" Background="Cornsilk">
+                        <TextBlock Text="Your Nearby's Messages" FontWeight="Bold" Foreground="#FFD72626" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" >
+
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel  Width="300">       
-                        <TextBlock Margin="14,10,0,0" Text="{Binding content}" />
-                        <TextBlock Margin="14,10,0,0" Text="{Binding comments_count}" />
-                        <Button Margin="14,10,0,0" Content="{Binding favorites_count}" Click="Button_Click_2" Tag="{Binding aid}" />
-                    </StackPanel>
+                    <Grid Height="350" Background="{Binding color}" HorizontalAlignment="Stretch" Width="400">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="0*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock  Text="{Binding content}" Foreground="White" Margin="0,0,0,0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"  TextWrapping="Wrap"/>
+
+
+                        <Button Margin="269,292,0,0" Click="Button_Click_2" Tag="{Binding aid}" ClickMode="Press" BorderBrush="Transparent" Height="44" Width="74" RenderTransformOrigin="0.488,1.293">
+                            <Button.Background>
+                                <ImageBrush ImageSource="Assets/heart.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock  Text="{Binding favorites_count}" Foreground="White" Margin="355.017,306.54,12.835,10.497" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" Width="32.148" d:LayoutRounding="Auto" Height="32.963" >
+                            <TextBlock.RenderTransform>
+                                <CompositeTransform Rotation="2.245"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock Text="{Binding distance}" Margin="10,302,309,7" RenderTransformOrigin="-5.437,0.513" FontSize="20"   />
+                        <TextBlock Text="m" Margin="85,302,274,7" RenderTransformOrigin="-5.437,0.513" FontSize="20"  />
+                        <TextBlock Text="{Binding comments_count}" Margin="260,302,105,4" SelectionChanged="TextBlock_SelectionChanged" RenderTransformOrigin="-0.375,0.449" FontSize="20" />
+                        <Image HorizontalAlignment="Left" Height="38.206" Margin="209.499,304.817,0,0" VerticalAlignment="Top" Width="38.333" RenderTransformOrigin="-0.183,-0.397" UseLayoutRounding="False" d:LayoutRounding="Auto" Source="Assets/comment.png">
+                            <Image.RenderTransform>
+                                <CompositeTransform SkewY="-0.936" TranslateY="0.3"/>
+                            </Image.RenderTransform>
+
+                        </Image>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

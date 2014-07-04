@@ -34,6 +34,8 @@ namespace LocationAccess
     {
         Geolocator geo = null;
 
+        List<string> randomColors = new List<string>();
+
         Windows.Storage.StorageFolder local = Windows.Storage.ApplicationData.Current.LocalFolder;
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
@@ -71,9 +73,11 @@ namespace LocationAccess
             {
                 JsonObject jsonObject = JsonObject.Parse(responseText);
                 JsonArray jsonArray = jsonObject["secret"].GetArray();
+                int randomNum = 0;
 
                 foreach (JsonValue groupValue in jsonArray)
                 {
+
                     JsonObject itemObject = groupValue.GetObject();
                     Secret newSecret = new Secret
                     {
@@ -83,11 +87,13 @@ namespace LocationAccess
                         latitude = Double.Parse(itemObject["latitude"].GetString()),
                         content = itemObject["content"].GetString(),
                         time = Int32.Parse(itemObject["time"].GetString()),
-                        distance = itemObject["distance"].GetNumber(),
+                        distance = Math.Round(itemObject["distance"].GetNumber() / 1000, 2),
                         comments_count = Int32.Parse(itemObject["comments_count"].GetString()),
-                        favorites_count = Int32.Parse(itemObject["favorites_count"].GetString())
+                        favorites_count = Int32.Parse(itemObject["favorites_count"].GetString()),
+                        color = randomColors[randomNum%4]
                     };
                     items.Add(newSecret);
+                    randomNum++;
                 }
                 MyList.ItemsSource = items;
             }
@@ -110,6 +116,11 @@ namespace LocationAccess
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+            randomColors.Add("#00989E");
+            randomColors.Add("#FFE67A");
+            randomColors.Add("#D8220D");
+            randomColors.Add("#F6B01A");
+            randomColors.Add("#B4D78D");
 
             Object value = localSettings.Values["UserID"];
 
@@ -164,9 +175,9 @@ namespace LocationAccess
             HttpContent content = new StringContent(streamContent);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             HttpResponseMessage response = await httpClient.PostAsync("http://scuinfo.com/Api/add_content/key/scucsharp",content);
-            string result = await response.Content.ReadAsStringAsync();
-            var messageDialog = new MessageDialog(result);
-            await messageDialog.ShowAsync();
+           // string result = await response.Content.ReadAsStringAsync();
+           // var messageDialog = new MessageDialog(result);
+           // await messageDialog.ShowAsync();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -189,9 +200,25 @@ namespace LocationAccess
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
             HttpResponseMessage response = await httpClient.PostAsync("http://scuinfo.com/Api/add_favorite/key/scucsharp", content);
             string result = await response.Content.ReadAsStringAsync();
-            var messageDialog = new MessageDialog(result);
-            await messageDialog.ShowAsync();
+            //var messageDialog = new MessageDialog(result);
+            //await messageDialog.ShowAsync();
             LoadListViewData();
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(FavoritePage), null);
+
+        }
+
+        private void TextBlock_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextBlock_SelectionChanged_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

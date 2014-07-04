@@ -64,7 +64,7 @@ namespace LocationAccess
                     latitude = Double.Parse(itemObject["latitude"].GetString()),
                     content = itemObject["content"].GetString(),
                     time = Int32.Parse(itemObject["time"].GetString()),
-                    distance = itemObject["distance"].GetNumber(),
+                    distance = Math.Round(itemObject["distance"].GetNumber()/1000,2),
                     comments_count = Int32.Parse(itemObject["comments_count"].GetString()),
                     favorites_count = Int32.Parse(itemObject["favorites_count"].GetString())
                 };

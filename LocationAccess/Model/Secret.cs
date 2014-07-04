@@ -17,5 +17,6 @@ namespace LocationAccess.Model
         public double distance { get; set; }
         public int comments_count { get; set; }
         public int favorites_count { get; set; }
+        public string color { get; set; }
     }
 }

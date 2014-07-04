@@ -6,22 +6,22 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="668.667" Width="387.5">
 
     <Grid>
-        <TextBlock Margin="14,10,0,0" x:Name="Secret"></TextBlock>
-        <ListView Margin="14,60,0,0" x:Name="CommentList">
+        <TextBlock Margin="0,10,0,525" x:Name="Secret" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"></TextBlock>
+        <ListView Margin="0,114,0,123" x:Name="CommentList">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel  Width="300">
-                        <TextBlock Margin="14,10,0,0" Text="{Binding content}" />
+                    <StackPanel  Width="400" Height="112">
+                        <TextBlock Margin="0,10,0,0" Text="{Binding content}" Height="101" Foreground="#FFF6E9E9" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         <Grid Margin="14,450,0,0" >
-            <TextBox Margin="14,0,100,30" x:Name="textComment"></TextBox>
-            <Button Content="Post" Click="Button_Click"></Button>
+            <TextBox Margin="-12,127,114,0" x:Name="textComment" PlaceholderText="Enter your Comment" TextWrapping="Wrap"  AcceptsReturn="True" VerticalAlignment="Stretch" InputScope="Chat" ></TextBox>
+            <Button Content="Publish" Click="Button_Click" Margin="260,103,4,-10" Height="99" HorizontalAlignment="Stretch"/>
         </Grid>
     </Grid>
 </Page>

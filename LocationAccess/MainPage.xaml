@@ -9,12 +9,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.BottomAppBar>
         <CommandBar>
-  
             <AppBarButton Icon="Add" Label="Add">
                 <AppBarButton.Flyout>
                     <Flyout>
                         <Grid Height="400">
-                            <ListBox x:Name="PostContent" />
+                            <TextBox x:Name="textSecret" Width="300"  Height="200"/>
                             <Button Content="Post Message" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Button_Click"></Button>
                         </Grid>
                     </Flyout>
@@ -23,29 +22,20 @@
         </CommandBar>
     </Page.BottomAppBar>
     <Grid>
-        <Button Content="Get Location Async" Click="button1_Click" 
-            HorizontalAlignment="Left" Margin="11,10,0,0" Name="button1" VerticalAlignment="Top" />
-        <TextBlock Margin="14,30,0,0" Text="Latitude" Name="textLatitude" />
-        <TextBlock Margin="14,60,0,0" Text="Longitude" Name="textLongitude" />
-        <TextBlock Margin="14,90,0,0" Text="Accuracy" Name="textAccuracy" />
-        <TextBlock Margin="14,120,0,0" Text="UserID" Name="textUserID" />
-
         <ListView x:Name="MyList"
                     IsItemClickEnabled="True"
                     Margin="14,150,0,0"
                     ItemClick="ItemView_ItemClick"
-                    ContinuumNavigationTransitionInfo.ExitElementContainer="True"
-                   >
+                    ContinuumNavigationTransitionInfo.ExitElementContainer="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel  Width="300">       
                         <TextBlock Margin="14,10,0,0" Text="{Binding content}" />
                         <TextBlock Margin="14,10,0,0" Text="{Binding comments_count}" />
-                        <Button Margin="14,10,0,0" Content="{Binding favorites_count}" Click="Button_Click_2" />
+                        <Button Margin="14,10,0,0" Content="{Binding favorites_count}" Click="Button_Click_2" Tag="{Binding aid}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
     </Grid>
-
 </Page>

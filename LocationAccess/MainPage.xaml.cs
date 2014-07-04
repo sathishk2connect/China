@@ -37,16 +37,35 @@ namespace LocationAccess
         Windows.Storage.StorageFolder local = Windows.Storage.ApplicationData.Current.LocalFolder;
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
+        public static string UserID { get; set; }
+        public static string Latitude { get; set; }
+        public static string Longitude { get; set; }
+
+        private async Task LoadGeoLocation()
+        {
+
+            if (geo == null)
+            {
+                geo = new Geolocator();
+            }
+
+            Geoposition pos = await geo.GetGeopositionAsync();
+            Latitude = pos.Coordinate.Point.Position.Latitude.ToString();
+            Longitude = pos.Coordinate.Point.Position.Longitude.ToString();
+        }
+
         private async void LoadListViewData()
         {
+             await LoadGeoLocation();
              List<Secret> items = new List<Secret>();
              HttpClient httpClient = new HttpClient();
+            string UrlParameter = "?longitude=" + Longitude + "&latitude=" + Latitude;
 
              // Optionally, define HTTP headers 
              httpClient.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
 
              // Make the call 
-            HttpResponseMessage responseMessage = await httpClient.GetAsync(new Uri("http://scuinfo.com/Api/home_timeline/key/scucsharp?longitude=88&latitude=88"));
+            HttpResponseMessage responseMessage = await httpClient.GetAsync(new Uri("http://scuinfo.com/Api/home_timeline/key/scucsharp" + UrlParameter));
             string responseText = await responseMessage.Content.ReadAsStringAsync();
             if (!string.IsNullOrEmpty(responseText))
             {
@@ -81,10 +100,9 @@ namespace LocationAccess
             httpClient.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
             // Make the call 
             string responseText = await httpClient.GetStringAsync(new Uri("http://scuinfo.com/Api/add_user?key=scucsharp"));
-            textUserID.Text = responseText;
             JsonObject jsonObject = JsonObject.Parse(responseText);
             localSettings.Values["UserID"] = jsonObject["uid"].GetNumber();
-            textUserID.Text = localSettings.Values["UserID"].ToString();
+            UserID = localSettings.Values["UserID"].ToString();
         }
 
         public MainPage()
@@ -101,7 +119,7 @@ namespace LocationAccess
             }
             else
             {
-                textUserID.Text = value.ToString();
+                UserID = value.ToString();
             }
 
             LoadListViewData(); 
@@ -109,21 +127,7 @@ namespace LocationAccess
 
 
 
-        private async void button1_Click(
-            object sender, RoutedEventArgs e)
-        {
-            
-            if (geo == null)
-            {
-                geo = new Geolocator();
-            }
 
-            Geoposition pos = await geo.GetGeopositionAsync();
-            textLatitude.Text = "Latitude: " + pos.Coordinate.Point.Position.Latitude.ToString();
-            textLongitude.Text = "Longitude: " + pos.Coordinate.Point.Position.Longitude.ToString();
-            textAccuracy.Text = "Accuracy: " + pos.Coordinate.Accuracy.ToString();
-            
-        }
 
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
@@ -132,6 +136,7 @@ namespace LocationAccess
         /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            LoadListViewData(); 
             // TODO: Prepare page for display here.
 
             // TODO: If your application contains multiple pages, ensure that you are
@@ -139,6 +144,11 @@ namespace LocationAccess
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            LoadListViewData();
         }
 
         private void ItemView_ItemClick(object sender, ItemClickEventArgs e)
@@ -149,12 +159,10 @@ namespace LocationAccess
 
         private async void PostContentMessage()
         {
-            String streamContent = "content=I+am+good&latitude=25&longitude=34&uid=1&sub=Submit";
+            String streamContent = "content=" + textSecret.Text + "&latitude=" + MainPage.Latitude + "&longitude=" + MainPage.Longitude + "&uid=" + MainPage.UserID;
             HttpClient httpClient = new HttpClient();
             HttpContent content = new StringContent(streamContent);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-            //var messageDialog1 = new MessageDialog(content.ToString());
-            //await messageDialog1.ShowAsync();
             HttpResponseMessage response = await httpClient.PostAsync("http://scuinfo.com/Api/add_content/key/scucsharp",content);
             string result = await response.Content.ReadAsStringAsync();
             var messageDialog = new MessageDialog(result);
@@ -164,17 +172,26 @@ namespace LocationAccess
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             PostContentMessage();
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            
+            var selAppID = ((Button)sender).Tag;
+            int appID = (int) selAppID;
+            PostFavoriteComment(appID);
+        }
+
+        private async void PostFavoriteComment(int id)
+        {
+            String streamContent = "aid=" + id.ToString() + "&uid=" + MainPage.UserID;
+            HttpClient httpClient = new HttpClient();
+            HttpContent content = new StringContent(streamContent);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            HttpResponseMessage response = await httpClient.PostAsync("http://scuinfo.com/Api/add_favorite/key/scucsharp", content);
+            string result = await response.Content.ReadAsStringAsync();
+            var messageDialog = new MessageDialog(result);
+            await messageDialog.ShowAsync();
+            LoadListViewData();
         }
     }
 }

@@ -9,6 +9,19 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBox></TextBox>
+        <TextBlock Margin="14,10,0,0" x:Name="Secret"></TextBlock>
+        <ListView Margin="14,60,0,0" x:Name="CommentList">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel  Width="300">
+                        <TextBlock Margin="14,10,0,0" Text="{Binding content}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Margin="14,450,0,0" >
+            <TextBox Margin="14,0,100,30" x:Name="textComment"></TextBox>
+            <Button Content="Post" Click="Button_Click"></Button>
+        </Grid>
     </Grid>
 </Page>
